@@ -32,6 +32,7 @@ public class RobotContainer {
   /* Subsystems */
   private final Swerve swerve = new Swerve();
   private final Elevator elevator = new Elevator();
+  private final CoralHead coralHead = new CoralHead();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -66,6 +67,13 @@ public class RobotContainer {
     operator
         .axisGreaterThan(XboxController.Axis.kLeftY.value, 0.2)
         .onTrue(elevator.relativePositionCommand(-1));
+    
+    operator
+    .leftTrigger(0.01)
+    .or(operator.rightTrigger(0.01))
+    .whileTrue(
+        coralHead.outputCommand(
+            () -> (operator.getRightTriggerAxis() - operator.getLeftTriggerAxis())));
   }
 
   /**
