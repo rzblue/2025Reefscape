@@ -18,6 +18,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
+  private final CommandXboxController operator = new CommandXboxController(1);
 
   /* Drive Controls */
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -53,10 +54,18 @@ public class RobotContainer {
   private void configureButtonBindings() {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(() -> swerve.zeroHeading()));
-    driver.povDown().onTrue(elevator.positionCommand(0));
-    driver.povLeft().onTrue(elevator.positionCommand(50.0 / 3));
-    driver.povRight().onTrue(elevator.positionCommand(50.0 * (2.0 / 3.0)));
-    driver.povUp().onTrue(elevator.positionCommand(50));
+
+    operator.povDown().onTrue(elevator.positionCommand(0)); // Stow
+    operator.povLeft().onTrue(elevator.positionCommand(9.5)); // L2
+    operator.povRight().onTrue(elevator.positionCommand(25.5)); // L3
+    operator.povUp().onTrue(elevator.positionCommand(50)); // L4(?)/max
+
+    operator
+        .axisLessThan(XboxController.Axis.kLeftY.value, -0.2)
+        .onTrue(elevator.relativePositionCommand(1));
+    operator
+        .axisGreaterThan(XboxController.Axis.kLeftY.value, 0.2)
+        .onTrue(elevator.relativePositionCommand(-1));
   }
 
   /**

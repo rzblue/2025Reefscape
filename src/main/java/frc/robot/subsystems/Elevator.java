@@ -51,6 +51,10 @@ public class Elevator extends SubsystemBase {
     return runOnce(() -> setPosition(position));
   }
 
+  public Command relativePositionCommand(double relativePos) {
+    return runOnce(() -> setPosition(posRequest.Position + relativePos));
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Elevator/Position", leader.getPosition().getValueAsDouble());
