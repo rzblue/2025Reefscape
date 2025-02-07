@@ -56,10 +56,10 @@ public class RobotContainer {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(() -> swerve.zeroHeading()));
 
-    operator.povDown().onTrue(elevator.positionCommand(0)); // Stow
-    operator.povLeft().onTrue(elevator.positionCommand(9.5)); // L2
-    operator.povRight().onTrue(elevator.positionCommand(25.5)); // L3
-    operator.povUp().onTrue(elevator.positionCommand(50)); // L4(?)/max
+    operator.b().onTrue(elevator.positionCommand(0)); // Stow
+    operator.a().onTrue(elevator.positionCommand(9.5)); // L2
+    operator.x().onTrue(elevator.positionCommand(25.5)); // L3
+    operator.y().onTrue(elevator.positionCommand(50)); // L4(?)/max
 
     operator
         .axisLessThan(XboxController.Axis.kLeftY.value, -0.2)
@@ -67,13 +67,18 @@ public class RobotContainer {
     operator
         .axisGreaterThan(XboxController.Axis.kLeftY.value, 0.2)
         .onTrue(elevator.relativePositionCommand(-1));
-    
+
+    // operator
+    // .leftTrigger(0.01)
+    // .or(operator.rightTrigger(0.01))
+    // .whileTrue(
+    //     coralHead.outputCommand(
+    //         () -> (operator.getRightTriggerAxis() - operator.getLeftTriggerAxis())));
     operator
-    .leftTrigger(0.01)
-    .or(operator.rightTrigger(0.01))
-    .whileTrue(
-        coralHead.outputCommand(
-            () -> (operator.getRightTriggerAxis() - operator.getLeftTriggerAxis())));
+        .rightTrigger(.1)
+        .whileTrue(elevator.positionCommand(0).alongWith(coralHead.outputCommand(() -> 0.075)));
+
+    operator.leftTrigger(.1).whileTrue(coralHead.outputCommand(() -> .25));
   }
 
   /**
