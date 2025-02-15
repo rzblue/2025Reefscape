@@ -37,6 +37,7 @@ public class Swerve extends SubsystemBase {
 
     canandgyro = new Canandgyro(0);
     canandgyro.resetFactoryDefaults(0.35);
+    // CanandEventLoop.getInstance().setDevicePresenceWarnings(canandgyro, false);
 
     mSwerveMods =
         new SwerveModule[] {

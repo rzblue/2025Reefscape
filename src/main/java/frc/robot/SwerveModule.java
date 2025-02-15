@@ -46,6 +46,16 @@ public class SwerveModule {
     mDriveMotor = new TalonFX(moduleConstants.driveMotorID());
     mDriveMotor.getConfigurator().apply(getDriveMotorConfig());
     mDriveMotor.getConfigurator().setPosition(0.0);
+
+    angleEncoder.getAbsolutePosition().setUpdateFrequency(100);
+    angleEncoder.optimizeBusUtilization();
+
+    mDriveMotor.getVelocity().setUpdateFrequency(100);
+    mDriveMotor.getPosition().setUpdateFrequency(100);
+    mDriveMotor.optimizeBusUtilization();
+    mAngleMotor.getVelocity().setUpdateFrequency(100);
+    mAngleMotor.getPosition().setUpdateFrequency(100);
+    mAngleMotor.optimizeBusUtilization();
   }
 
   private TalonFXConfiguration getDriveMotorConfig() {
