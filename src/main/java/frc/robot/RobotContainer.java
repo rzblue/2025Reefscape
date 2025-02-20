@@ -33,6 +33,7 @@ public class RobotContainer {
   private final Swerve swerve = new Swerve();
   private final Elevator elevator = new Elevator();
   private final CoralHead coralHead = new CoralHead();
+  private final AlgaeKicker algaeKicker = new AlgaeKicker();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -79,6 +80,9 @@ public class RobotContainer {
         .whileTrue(elevator.positionCommand(0).alongWith(coralHead.outputCommand(() -> 0.075)));
 
     operator.leftTrigger(.1).whileTrue(coralHead.outputCommand(() -> .25));
+
+    operator.povDown().whileTrue(algaeKicker.outputCommand(() -> 0.5));
+    operator.povUp().whileTrue(algaeKicker.outputCommand(() -> -0.5));
   }
 
   /**
