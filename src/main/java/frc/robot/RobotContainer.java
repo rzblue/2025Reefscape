@@ -34,6 +34,7 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final CoralHead coralHead = new CoralHead();
   private final AlgaeKicker algaeKicker = new AlgaeKicker();
+  private final Climber climber = new Climber();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -60,7 +61,7 @@ public class RobotContainer {
     operator.b().onTrue(elevator.positionCommand(0)); // Stow
     operator.a().onTrue(elevator.positionCommand(9.5)); // L2
     operator.x().onTrue(elevator.positionCommand(25.5)); // L3
-    operator.y().onTrue(elevator.positionCommand(50)); // L4(?)/max
+    operator.y().onTrue(elevator.positionCommand(52)); // L4(?)/max
 
     operator
         .axisLessThan(XboxController.Axis.kLeftY.value, -0.2)
@@ -83,6 +84,8 @@ public class RobotContainer {
 
     operator.povDown().whileTrue(algaeKicker.outputCommand(() -> 0.5));
     operator.povUp().whileTrue(algaeKicker.outputCommand(() -> -0.5));
+    operator.back().onTrue(climber.runOnce(() -> climber.unlatch()));
+    operator.start().onTrue(climber.runOnce(() -> climber.latch()));
   }
 
   /**
