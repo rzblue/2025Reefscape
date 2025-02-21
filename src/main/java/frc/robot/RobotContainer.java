@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.*;
 
 /**
@@ -85,7 +86,10 @@ public class RobotContainer {
     operator.povDown().whileTrue(algaeKicker.outputCommand(() -> 0.5));
     operator.povUp().whileTrue(algaeKicker.outputCommand(() -> -0.5));
     operator.back().onTrue(climber.runOnce(() -> climber.unlatch()));
+
     operator.start().onTrue(climber.runOnce(() -> climber.latch()));
+
+    RobotModeTriggers.disabled().onTrue(climber.runOnce(() -> climber.latch()));
   }
 
   /**
