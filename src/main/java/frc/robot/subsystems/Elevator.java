@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.MultiturnEncoder;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
@@ -17,7 +18,10 @@ public class Elevator extends SubsystemBase implements Logged {
   private final Follower followReq = new Follower(leader.getDeviceID(), false);
   private final MotionMagicVoltage posRequest = new MotionMagicVoltage(0);
 
+  MultiturnEncoder multiturnEncoder = new MultiturnEncoder(1, 2, 21, 26);
+
   public Elevator() {
+    multiturnEncoder.zero();
     var config = new TalonFXConfiguration();
     config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
     config.CurrentLimits.withStatorCurrentLimit(60)
@@ -65,8 +69,9 @@ public class Elevator extends SubsystemBase implements Logged {
 
   @Override
   public void periodic() {
-    log("Elevator/Velocity", leader.getVelocity().getValueAsDouble());
-    log("Elevator/StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
-    log("Elevator/SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
+    log("Velocity", leader.getVelocity().getValueAsDouble());
+    log("StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
+    log("SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
+    log("Multiturn Encoder", multiturnEncoder.get());
   }
 }
