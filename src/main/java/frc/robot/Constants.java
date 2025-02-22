@@ -4,13 +4,24 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import frc.lib.util.SwerveModuleConstants;
+import org.photonvision.PhotonCamera;
 
 public final class Constants {
   public static final double stickDeadband = 0.04;
+
+  public static final boolean aprilTagsEnabled = true;
+
+  public static final AprilTagFieldLayout kOfficialField = 
+        AprilTagFields.k2025ReefscapeAndyMark.loadAprilTagLayoutField();
 
   public static final class Swerve {
     public static final int pigeonID = 1;
@@ -146,5 +157,39 @@ public final class Constants {
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
+  }
+
+  public static final class CameraConstants {
+    public static final String reefCamName = "Arducam_OV9281_3";
+    public static final PhotonCamera reefCam = new PhotonCamera(reefCamName);
+    public static final Transform3d reefCamTransform = 
+        new Transform3d(
+          new Translation3d(
+            Units.inchesToMeters(-11.375),
+            Units.inchesToMeters(-10.25),
+            Units.inchesToMeters(29.1875)),
+          new Rotation3d(
+            Units.degreesToRadians(0),
+            Units.degreesToRadians(12),
+            Units.degreesToRadians(0)
+          )
+        );
+
+    public static final String coralCamName = "Arducam_OV9281_5";
+    public static final PhotonCamera coralCam = new PhotonCamera(coralCamName);
+    public static final Transform3d coralCamTransform = 
+        new Transform3d(
+          new Translation3d(
+            Units.inchesToMeters(10.625),
+            Units.inchesToMeters(11.8125),
+            Units.inchesToMeters(40.125)),
+          new Rotation3d(
+            Units.degreesToRadians(0),
+            Units.degreesToRadians(-14),
+            Units.degreesToRadians(210.5)
+          )
+        );
+
+
   }
 }
