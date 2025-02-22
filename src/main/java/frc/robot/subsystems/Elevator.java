@@ -27,7 +27,7 @@ public class Elevator extends SubsystemBase {
 
     follower.getConfigurator().apply(config);
 
-    config.SoftwareLimitSwitch.withForwardSoftLimitThreshold(50)
+    config.SoftwareLimitSwitch.withForwardSoftLimitThreshold(52.4)
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitThreshold(0)
         .withReverseSoftLimitEnable(true);
