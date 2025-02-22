@@ -89,7 +89,8 @@ public class RobotContainer {
 
     operator.start().onTrue(climber.runOnce(() -> climber.latch()));
 
-    RobotModeTriggers.disabled().onTrue(climber.runOnce(() -> climber.latch()));
+    RobotModeTriggers.disabled()
+        .onTrue(climber.runOnce(() -> climber.latch()).ignoringDisable(true));
   }
 
   /**
