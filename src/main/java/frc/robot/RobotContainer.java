@@ -83,8 +83,10 @@ public class RobotContainer implements Logged {
         .whileTrue(elevator.positionCommand(0).alongWith(coralHead.outputCommand(() -> 0.075)));
 
     operator.leftTrigger(.1).whileTrue(coralHead.outputCommand(() -> .25));
-    operator.leftBumper().or(operator.rightBumper()).whileTrue(coralHead.outputCommand(() -> -0.15));
-
+    operator
+        .leftBumper()
+        .or(operator.rightBumper())
+        .whileTrue(coralHead.outputCommand(() -> -0.15));
 
     operator.povDown().whileTrue(algaeKicker.outputCommand(() -> 0.5));
     operator.povUp().whileTrue(algaeKicker.outputCommand(() -> -0.5));

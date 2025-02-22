@@ -5,11 +5,12 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import monologue.Annotations.Log;
+import monologue.Logged;
 
-public class Elevator extends SubsystemBase {
+public class Elevator extends SubsystemBase implements Logged {
   private final TalonFX leader = new TalonFX(41);
   private final TalonFX follower = new TalonFX(42);
 
@@ -41,27 +42,31 @@ public class Elevator extends SubsystemBase {
     leader.getStatorCurrent().setUpdateFrequency(50);
     leader.getSupplyCurrent().setUpdateFrequency(50);
     leader.getVelocity().setUpdateFrequency(50);
+    leader.getDutyCycle().setUpdateFrequency(100);
+    leader.optimizeBusUtilization();
   }
 
-  public void setPosition(double position) {
+  public void setGoal(double position) {
     leader.setControl(posRequest.withPosition(position));
   }
 
   public Command positionCommand(double position) {
-    return runOnce(() -> setPosition(position));
+    return runOnce(() -> setGoal(position));
   }
 
   public Command relativePositionCommand(double relativePos) {
-    return runOnce(() -> setPosition(posRequest.Position + relativePos));
+    return runOnce(() -> setGoal(posRequest.Position + relativePos));
+  }
+
+  @Log(key = "Position")
+  public double getPosition() {
+    return leader.getPosition().getValueAsDouble();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator/Position", leader.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Elevator/Velocity", leader.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "Elevator/StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "Elevator/SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
+    log("Elevator/Velocity", leader.getVelocity().getValueAsDouble());
+    log("Elevator/StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
+    log("Elevator/SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
   }
 }
