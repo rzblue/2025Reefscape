@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.*;
 import monologue.Logged;
@@ -30,6 +31,7 @@ public class RobotContainer implements Logged {
   /* Driver Buttons */
   private final JoystickButton zeroGyro =
       new JoystickButton(driver.getHID(), XboxController.Button.kY.value);
+  private final Trigger robotCentric = driver.leftBumper();
 
   /* Subsystems */
   private final Swerve swerve = new Swerve();
@@ -44,7 +46,8 @@ public class RobotContainer implements Logged {
         swerve.teleopDriveCommand(
             () -> -driver.getRawAxis(translationAxis),
             () -> -driver.getRawAxis(strafeAxis),
-            () -> -driver.getRawAxis(rotationAxis)));
+            () -> -driver.getRawAxis(rotationAxis),
+            robotCentric));
 
     // Configure the button bindings
     configureButtonBindings();

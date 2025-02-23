@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
 import frc.robot.AprilTagVision;
+
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class Swerve extends SubsystemBase {
@@ -131,19 +133,21 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-  public Command teleopDriveCommand(DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta) {
+  public Command teleopDriveCommand(DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta,
+                                      BooleanSupplier rCent) {
     return run(
         () -> {
           /* Get Values, Deadband*/
           double translationVal = MathUtil.applyDeadband(x.getAsDouble(), Constants.stickDeadband);
           double strafeVal = MathUtil.applyDeadband(y.getAsDouble(), Constants.stickDeadband);
           double rotationVal = MathUtil.applyDeadband(theta.getAsDouble(), Constants.stickDeadband);
+          Boolean robotCentric = rCent.getAsBoolean();
 
           /* Drive */
           drive(
               new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
               rotationVal * Constants.Swerve.maxAngularVelocity,
-              true,
+              robotCentric,
               true);
         });
   }
