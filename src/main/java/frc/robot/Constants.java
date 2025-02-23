@@ -21,8 +21,8 @@ public final class Constants {
   public static final boolean aprilTagsEnabled = true;
 
   public static final AprilTagFieldLayout kOfficialField = 
-        AprilTagFields.k2025ReefscapeAndyMark.loadAprilTagLayoutField();
-
+    AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+       
   public static final class Swerve {
     public static final int pigeonID = 1;
 
