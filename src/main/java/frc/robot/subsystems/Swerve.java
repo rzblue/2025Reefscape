@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -19,13 +19,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
+import frc.robot.AprilTagVision;
 import java.util.function.DoubleSupplier;
 
 public class Swerve extends SubsystemBase {
-  public SwerveDriveOdometry swerveOdometry;
+  public SwerveDrivePoseEstimator swervePoseEstimator;
   public SwerveModule[] mSwerveMods;
   public Pigeon2 gyro;
   public Canandgyro canandgyro;
+
+  private AprilTagVision vision;
 
   private StructPublisher<Pose2d> posePub =
       NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
@@ -47,9 +50,11 @@ public class Swerve extends SubsystemBase {
           new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
-    swerveOdometry =
-        new SwerveDriveOdometry(
-            Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
+    swervePoseEstimator =
+        new SwerveDrivePoseEstimator(
+            Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), new Pose2d());
+
+    vision = new AprilTagVision();
   }
 
   public void drive(
@@ -93,11 +98,11 @@ public class Swerve extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return swerveOdometry.getPoseMeters();
+    return swervePoseEstimator.getEstimatedPosition();
   }
 
   public void setPose(Pose2d pose) {
-    swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+    swervePoseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
   }
 
   public Rotation2d getHeading() {
@@ -105,12 +110,12 @@ public class Swerve extends SubsystemBase {
   }
 
   public void setHeading(Rotation2d heading) {
-    swerveOdometry.resetPosition(
+    swervePoseEstimator.resetPosition(
         getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), heading));
   }
 
   public void zeroHeading() {
-    swerveOdometry.resetPosition(
+    swervePoseEstimator.resetPosition(
         getGyroYaw(),
         getModulePositions(),
         new Pose2d(getPose().getTranslation(), new Rotation2d()));
@@ -146,8 +151,16 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
 
-    swerveOdometry.update(getGyroYaw(), getModulePositions());
-    posePub.set(swerveOdometry.getPoseMeters());
+    swervePoseEstimator.update(getGyroYaw(), getModulePositions());
+    vision.processVisionUpdates(
+      (estimatedPose) -> {
+        if (Constants.aprilTagsEnabled) {
+          swervePoseEstimator.addVisionMeasurement(
+            estimatedPose.estimatedPose.toPose2d(), estimatedPose.timestampSeconds);
+        }
+      }, 
+      getPose());
+    posePub.set(swervePoseEstimator.getEstimatedPosition());
     for (SwerveModule mod : mSwerveMods) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
