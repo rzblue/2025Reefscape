@@ -69,13 +69,9 @@ public class Swerve extends SubsystemBase {
         this::getPose,
         this::setPose,
         this::getRobotRelativeChassisSpeeds,
-        (speeds, feedforwards) -> driveRobotRelative(speeds), // driveRobotRelativeChassisSpeed(), // Method that will drive the
-        // robot given ROBOT
-        // RELATIVE ChassisSpeeds. Also optionally outputs
-        // individual module feedforwards
-        new PPHolonomicDriveController( // PPHolonomicController is the built in path following
-            // controller for holonomic drive trains
-            new PIDConstants(Constants.AutoConstants.kPXController), // Translation PID constants
+        (speeds, feedforwards) -> driveRobotRelative(speeds),
+        new PPHolonomicDriveController(
+            new PIDConstants(Constants.AutoConstants.kPXController),
             new PIDConstants(Constants.AutoConstants.kPThetaController)),
         config,
         this::shouldFlipPath,
@@ -84,10 +80,6 @@ public class Swerve extends SubsystemBase {
   }
 
   public boolean shouldFlipPath() {
-    // Boolean supplier that controls when the path will be mirrored for the red alliance
-    // This will flip the path being followed to the red side of the field.
-    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
       return alliance.get() == DriverStation.Alliance.Red;
@@ -111,7 +103,8 @@ public class Swerve extends SubsystemBase {
   }
 
   public void driveRobotRelative(ChassisSpeeds speeds) {
-    SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
+    SwerveModuleState[] swerveModuleStates =
+        Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
     setModuleStates(swerveModuleStates);
   }
 
@@ -193,7 +186,6 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     swerveOdometry.update(getGyroYaw(), getModulePositions());
     posePub.set(swerveOdometry.getPoseMeters());
     for (SwerveModule mod : mSwerveMods) {
