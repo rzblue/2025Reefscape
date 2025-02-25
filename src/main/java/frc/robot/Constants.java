@@ -159,6 +159,27 @@ public final class Constants {
     }
   }
 
+  public static final class AlgaeKickerConstants {
+    public static final int motorID = 52;
+
+    public static final double kickSpeed = 0.5;
+  }
+
+  public static final class CoralHeadConstants {
+    public static final int motorID = 51;
+    public static final int rearSensorPort = 10;
+    public static final int midSensorPort = 11;
+    public static final int frontSensorPort = 12;
+
+    public static final double intakeSpeed = 0.075;
+    public static final double scoreSpeed = 0.25;
+    public static final double retractSpeed = -0.15;
+  }
+
+  public static final class ClimberConstants {
+    public static final int servoPort = 0;
+  }
+
   public static final class CameraConstants {
     public static final String reefCamName = "Arducam_OV9281_3";
     public static final PhotonCamera reefCam = new PhotonCamera(reefCamName);

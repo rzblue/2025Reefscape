@@ -1,25 +1,25 @@
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
+import static frc.robot.Constants.CoralHeadConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import monologue.Logged;
+import java.util.function.DoubleSupplier;
 import monologue.Annotations.Log;
+import monologue.Logged;
 
 public class CoralHead extends SubsystemBase implements Logged {
-  private TalonFX motor = new TalonFX(51);
-  private DutyCycleOut dcRequest = new DutyCycleOut(0);
+  private final TalonFX motor = new TalonFX(motorID);
+  private final DutyCycleOut dcRequest = new DutyCycleOut(0);
 
-  private DigitalInput rearSensor = new DigitalInput(10);
-  private DigitalInput midSensor = new DigitalInput(11);
-  private DigitalInput frontSensor = new DigitalInput(12);
+  private final DigitalInput rearSensor = new DigitalInput(rearSensorPort);
+  private final DigitalInput midSensor = new DigitalInput(midSensorPort);
+  private final DigitalInput frontSensor = new DigitalInput(frontSensorPort);
 
   public CoralHead() {
     TalonFXConfiguration configuration = new TalonFXConfiguration();
@@ -33,6 +33,7 @@ public class CoralHead extends SubsystemBase implements Logged {
     motor.optimizeBusUtilization();
   }
 
+  @Log.Once(key = "init/ok")
   public void setOutput(double value) {
     dcRequest.Output = value;
     motor.setControl(dcRequest);
@@ -42,8 +43,24 @@ public class CoralHead extends SubsystemBase implements Logged {
     setOutput(0);
   }
 
+  public Command outputCommand(double output) {
+    return outputCommand(() -> output);
+  }
+
   public Command outputCommand(DoubleSupplier output) {
     return run(() -> setOutput(output.getAsDouble())).finallyDo(this::stop);
+  }
+
+  public Command operatorIntake() {
+    return outputCommand(intakeSpeed);
+  }
+
+  public Command operatorScore() {
+    return outputCommand(scoreSpeed);
+  }
+
+  public Command operatorRetract() {
+    return outputCommand(retractSpeed);
   }
 
   @Log(key = "rear sensor")
@@ -63,6 +80,8 @@ public class CoralHead extends SubsystemBase implements Logged {
 
   @Override
   public void periodic() {
+    log("commanded output", dcRequest.Output);
+    log("output", motor.getDutyCycle().getValueAsDouble());
     log("velocity", motor.getVelocity().getValueAsDouble());
     log("stator current", motor.getStatorCurrent().getValueAsDouble());
     log("supply current", motor.getSupplyCurrent().getValueAsDouble());

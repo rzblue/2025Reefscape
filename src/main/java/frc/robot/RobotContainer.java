@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
@@ -23,14 +22,7 @@ public class RobotContainer implements Logged {
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
 
-  /* Drive Controls */
-  private final int translationAxis = XboxController.Axis.kLeftY.value;
-  private final int strafeAxis = XboxController.Axis.kLeftX.value;
-  private final int rotationAxis = XboxController.Axis.kRightX.value;
-
   /* Driver Buttons */
-  private final JoystickButton zeroGyro =
-      new JoystickButton(driver.getHID(), XboxController.Button.kY.value);
   private final Trigger robotCentric = driver.leftBumper();
 
   /* Subsystems */
@@ -44,9 +36,9 @@ public class RobotContainer implements Logged {
   public RobotContainer() {
     swerve.setDefaultCommand(
         swerve.teleopDriveCommand(
-            () -> -driver.getRawAxis(translationAxis),
-            () -> -driver.getRawAxis(strafeAxis),
-            () -> -driver.getRawAxis(rotationAxis),
+            () -> -driver.getLeftY(),
+            () -> -driver.getLeftX(),
+            () -> -driver.getRightX(),
             robotCentric));
 
     // Configure the button bindings
@@ -61,44 +53,45 @@ public class RobotContainer implements Logged {
    */
   private void configureButtonBindings() {
     /* Driver Buttons */
-    zeroGyro.onTrue(new InstantCommand(() -> swerve.zeroHeading()));
+
+    // Zero heading
+    driver.y().onTrue(new InstantCommand(() -> swerve.zeroHeading()));
 
     operator.b().onTrue(elevator.positionCommand(0)); // Stow
     operator.a().onTrue(elevator.positionCommand(9.5)); // L2
     operator.x().onTrue(elevator.positionCommand(25.5)); // L3
     operator.y().onTrue(elevator.positionCommand(52)); // L4(?)/max
 
+    // Bump down
     operator
         .axisLessThan(XboxController.Axis.kLeftY.value, -0.2)
         .onTrue(elevator.relativePositionCommand(1));
+    // Bump Up
     operator
         .axisGreaterThan(XboxController.Axis.kLeftY.value, 0.2)
         .onTrue(elevator.relativePositionCommand(-1));
 
-    // operator
-    // .leftTrigger(0.01)
-    // .or(operator.rightTrigger(0.01))
-    // .whileTrue(
-    //     coralHead.outputCommand(
-    //         () -> (operator.getRightTriggerAxis() - operator.getLeftTriggerAxis())));
+    // Intake
     operator
         .rightTrigger(.1)
-        .whileTrue(elevator.positionCommand(0).alongWith(coralHead.outputCommand(() -> 0.075)));
+        .whileTrue(elevator.positionCommand(0).alongWith(coralHead.operatorIntake()));
 
-    operator.leftTrigger(.1).whileTrue(coralHead.outputCommand(() -> .25));
-    operator
-        .leftBumper()
-        .or(operator.rightBumper())
-        .whileTrue(coralHead.outputCommand(() -> -0.15));
+    // Score
+    operator.leftTrigger(.1).whileTrue(coralHead.operatorScore());
 
-    operator.povDown().whileTrue(algaeKicker.outputCommand(() -> 0.5));
-    operator.povUp().whileTrue(algaeKicker.outputCommand(() -> -0.5));
-    operator.back().onTrue(climber.runOnce(() -> climber.unlatch()));
+    // Retract
+    operator.leftBumper().or(operator.rightBumper()).whileTrue(coralHead.operatorRetract());
 
-    operator.start().onTrue(climber.runOnce(() -> climber.latch()));
+    // Kick algae
+    operator.povUp().whileTrue(algaeKicker.kickAlgae());
+
+    // Climb
+    operator.back().onTrue(climber.runOnce(() -> climber.deploy()));
+    // Reset climber
+    operator.start().onTrue(climber.runOnce(() -> climber.reset()));
 
     RobotModeTriggers.disabled()
-        .onTrue(climber.runOnce(() -> climber.latch()).ignoringDisable(true));
+        .onTrue(climber.runOnce(() -> climber.reset()).ignoringDisable(true));
   }
 
   /**
