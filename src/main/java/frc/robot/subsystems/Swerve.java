@@ -146,7 +146,7 @@ public class Swerve extends SubsystemBase {
           drive(
               new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
               rotationVal * Constants.Swerve.maxAngularVelocity,
-              robotCentric,
+            !robotCentric,
               true);
         });
   }
