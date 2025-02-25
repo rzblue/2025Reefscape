@@ -57,6 +57,8 @@ public class RobotContainer {
     configureButtonBindings();
 
     autoChooser = AutoBuilder.buildAutoChooser();
+
+    setupDashboard();
   }
 
   /**
@@ -113,6 +115,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Commands.none();
+    return autoChooser.getSelected();
   }
 }
