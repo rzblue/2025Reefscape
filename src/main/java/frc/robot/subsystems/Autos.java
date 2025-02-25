@@ -13,9 +13,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 
 
+
+
 public class Autos {
   
-  public static final double autoShooterSpeed = 80;
   Swerve drivetrain;
 
   public Command runPath(String pathName, boolean resetPose) {

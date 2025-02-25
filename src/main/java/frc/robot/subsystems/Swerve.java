@@ -69,15 +69,14 @@ public class Swerve extends SubsystemBase {
         this::getPose,
         this::setPose,
         this::getRobotRelativeChassisSpeeds,
-        (speeds,
-            feedforwards) -> {}, // driveRobotRelativeChassisSpeed(), // Method that will drive the
+        (speeds, feedforwards) -> driveRobotRelative(speeds), // driveRobotRelativeChassisSpeed(), // Method that will drive the
         // robot given ROBOT
         // RELATIVE ChassisSpeeds. Also optionally outputs
         // individual module feedforwards
         new PPHolonomicDriveController( // PPHolonomicController is the built in path following
             // controller for holonomic drive trains
-            new PIDConstants(Constants.Swerve.maxSpeed), // Translation PID constants
-            new PIDConstants(Constants.Swerve.maxAngularVelocity)),
+            new PIDConstants(Constants.AutoConstants.kPXController), // Translation PID constants
+            new PIDConstants(Constants.AutoConstants.kPThetaController)),
         config,
         this::shouldFlipPath,
         this // Reference to this subsystem to set requirements
@@ -109,6 +108,11 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
+  }
+
+  public void driveRobotRelative(ChassisSpeeds speeds) {
+    SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
+    setModuleStates(swerveModuleStates);
   }
 
   /* Used by SwerveControllerCommand in Auto */

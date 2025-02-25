@@ -147,4 +147,10 @@ public final class Constants {
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
   }
+
+  public static final class AutoConstants {
+    public static final double kPXController = 3;
+    public static final double kPYController = 3;
+    public static final double kPThetaController = 5;
+  }
 }

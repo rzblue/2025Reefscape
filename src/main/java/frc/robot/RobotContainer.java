@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import com.pathplanner.lib.auto.AutoBuilder;
 import frc.robot.subsystems.*;
 
 /**
@@ -37,6 +41,10 @@ public class RobotContainer {
   private final AlgaeKicker algaeKicker = new AlgaeKicker();
   private final Climber climber = new Climber();
 
+  private final SendableChooser<Command> autoChooser;
+
+  private final ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerve.setDefaultCommand(
@@ -47,6 +55,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+
   }
 
   /**
@@ -90,6 +101,11 @@ public class RobotContainer {
     operator.start().onTrue(climber.runOnce(() -> climber.latch()));
 
     RobotModeTriggers.disabled().onTrue(climber.runOnce(() -> climber.latch()));
+  }
+
+  public void setupDashboard() {
+    driverTab.add(autoChooser).withPosition(0, 0).withSize(2, 1);
+    Shuffleboard.selectTab("Driver");
   }
 
   /**
