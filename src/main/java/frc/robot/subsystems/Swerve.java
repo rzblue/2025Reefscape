@@ -4,12 +4,12 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -17,10 +17,9 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.AprilTagVision;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
-import frc.robot.AprilTagVision;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -133,8 +132,8 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-  public Command teleopDriveCommand(DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta,
-                                      BooleanSupplier rCent) {
+  public Command teleopDriveCommand(
+      DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, BooleanSupplier rCent) {
     return run(
         () -> {
           /* Get Values, Deadband*/
@@ -157,13 +156,13 @@ public class Swerve extends SubsystemBase {
 
     swervePoseEstimator.update(getGyroYaw(), getModulePositions());
     vision.processVisionUpdates(
-      (estimatedPose) -> {
-        if (Constants.aprilTagsEnabled) {
-          swervePoseEstimator.addVisionMeasurement(
-            estimatedPose.estimatedPose.toPose2d(), estimatedPose.timestampSeconds);
-        }
-      }, 
-      getPose());
+        (estimatedPose) -> {
+          if (Constants.aprilTagsEnabled) {
+            swervePoseEstimator.addVisionMeasurement(
+                estimatedPose.estimatedPose.toPose2d(), estimatedPose.timestampSeconds);
+          }
+        },
+        getPose());
     posePub.set(swervePoseEstimator.getEstimatedPosition());
     for (SwerveModule mod : mSwerveMods) {
       SmartDashboard.putNumber(
