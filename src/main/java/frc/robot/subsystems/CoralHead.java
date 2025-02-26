@@ -27,6 +27,8 @@ public class CoralHead extends SubsystemBase implements Logged {
     motor.getConfigurator().apply(configuration);
 
     motor.getVelocity().setUpdateFrequency(50);
+    motor.getPosition().setUpdateFrequency(50);
+    motor.getDutyCycle().setUpdateFrequency(50);
     motor.getSupplyCurrent().setUpdateFrequency(25);
     motor.getStatorCurrent().setUpdateFrequency(25);
     motor.getDeviceTemp().setUpdateFrequency(4);
@@ -55,12 +57,34 @@ public class CoralHead extends SubsystemBase implements Logged {
     return outputCommand(intakeSpeed);
   }
 
+  public Command slowIntake() {
+    return outputCommand(slowSpeed);
+  }
+
+  public Command smartIntake() {
+    return operatorIntake()
+        .until(() -> coralAquired())
+        .andThen(slowIntake())
+        .until(() -> coralStowed());
+  }
+
   public Command operatorScore() {
     return outputCommand(scoreSpeed);
   }
 
+  public Command smartExtend() {
+    return slowIntake().until(() -> coralExtended());
+  }
+
   public Command operatorRetract() {
     return outputCommand(retractSpeed);
+  }
+
+  public Command smartRetract() {
+    return operatorRetract()
+        .until(() -> coralAquired())
+        .andThen(slowIntake())
+        .until(() -> coralStowed());
   }
 
   @Log(key = "rear sensor")
@@ -78,11 +102,28 @@ public class CoralHead extends SubsystemBase implements Logged {
     return frontSensor.get();
   }
 
+  public boolean coralClear() {
+    return !getFrontSensor() && !getMidSensor() && !getRearSensor();
+  }
+
+  public boolean coralAquired() {
+    return getMidSensor();
+  }
+
+  public boolean coralStowed() {
+    return getMidSensor() && getFrontSensor();
+  }
+
+  public boolean coralExtended() {
+    return getFrontSensor() && !getMidSensor() && !getRearSensor();
+  }
+
   @Override
   public void periodic() {
     log("commanded output", dcRequest.Output);
     log("output", motor.getDutyCycle().getValueAsDouble());
     log("velocity", motor.getVelocity().getValueAsDouble());
+    log("position", motor.getPosition().getValueAsDouble());
     log("stator current", motor.getStatorCurrent().getValueAsDouble());
     log("supply current", motor.getSupplyCurrent().getValueAsDouble());
     log("temperature", motor.getDeviceTemp().getValueAsDouble());

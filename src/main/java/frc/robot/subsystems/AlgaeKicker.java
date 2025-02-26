@@ -23,6 +23,7 @@ public class AlgaeKicker extends SubsystemBase implements Logged {
   public AlgaeKicker() {
     SparkFlexConfig config = new SparkFlexConfig();
     config.idleMode(IdleMode.kCoast);
+    config.inverted(true);
     // Status 0: applied output, bus voltage, current, temperature
     config.signals.appliedOutputPeriodMs(20);
     // Status 1: faults + warnings

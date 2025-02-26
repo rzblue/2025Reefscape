@@ -2,11 +2,13 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -71,7 +73,7 @@ public class RobotContainer implements Logged {
     operator.b().onTrue(elevator.positionCommand(0)); // Stow
     operator.a().onTrue(elevator.positionCommand(9.5)); // L2
     operator.x().onTrue(elevator.positionCommand(25.5)); // L3
-    operator.y().onTrue(elevator.positionCommand(52)); // L4(?)/max
+    operator.y().onTrue(elevator.positionCommand(50)); // L4(?)/max
 
     // Bump down
     operator
@@ -85,13 +87,25 @@ public class RobotContainer implements Logged {
     // Intake
     operator
         .rightTrigger(.1)
-        .whileTrue(elevator.positionCommand(0).alongWith(coralHead.operatorIntake()));
+        // .whileTrue(elevator.positionCommand(0).alongWith(coralHead.operatorIntake()));
+        .whileTrue(
+            elevator
+                .positionCommand(0)
+                .alongWith(coralHead.smartIntake())
+                .alongWith(
+                    Commands.waitUntil(coralHead::coralAquired)
+                        .andThen(
+                            Commands.runOnce(() -> operator.setRumble(RumbleType.kBothRumble, 1))))
+                .finallyDo(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+
+    // Extend
+    operator.rightBumper().whileTrue(coralHead.smartExtend());
 
     // Score
     operator.leftTrigger(.1).whileTrue(coralHead.operatorScore());
 
     // Retract
-    operator.leftBumper().or(operator.rightBumper()).whileTrue(coralHead.operatorRetract());
+    operator.leftBumper().whileTrue(coralHead.operatorRetract());
 
     // Kick algae
     operator.povUp().whileTrue(algaeKicker.kickAlgae());

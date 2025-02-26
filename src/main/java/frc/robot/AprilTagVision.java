@@ -6,20 +6,22 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants.CameraConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import monologue.Logged;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-public class AprilTagVision {
+public class AprilTagVision implements Logged {
   private List<VisionCamera> cameras = new ArrayList<>();
 
   public AprilTagVision() {
-    if(!Constants.isAlpha) {
+    if (!Constants.isAlpha) {
       addCamera("ReefCam", CameraConstants.reefCamName, CameraConstants.reefCamTransform);
       addCamera("CoralCam", CameraConstants.coralCamName, CameraConstants.coralCamTransform);
     }
@@ -42,6 +44,7 @@ public class AprilTagVision {
         var result = results.get(results.size() - 1);
         var estimatedPose = camera.estimator().update(result);
         if (estimatedPose.isPresent() && shouldAcceptUpdate(result, estimatedPose.get(), curPose)) {
+          log(camera.name() + "EstimatedPose", estimatedPose.get().estimatedPose);
           poseConsumer.accept(estimatedPose.get());
         }
       }

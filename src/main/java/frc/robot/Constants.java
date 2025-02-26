@@ -22,7 +22,7 @@ public final class Constants {
 
   public static final double stickDeadband = 0.04;
 
-  public static final boolean aprilTagsEnabled = true;
+  public static final boolean aprilTagsEnabled = false;
 
   public static final AprilTagFieldLayout kOfficialField =
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
@@ -170,7 +170,7 @@ public final class Constants {
   public static final class AlgaeKickerConstants {
     public static final int motorID = 52;
 
-    public static final double kickSpeed = 0.5;
+    public static final double kickSpeed = 0.75;
   }
 
   public static final class CoralHeadConstants {
@@ -179,7 +179,8 @@ public final class Constants {
     public static final int midSensorPort = 11;
     public static final int frontSensorPort = 12;
 
-    public static final double intakeSpeed = 0.075;
+    public static final double intakeSpeed = 0.15;
+    public static final double slowSpeed = .075;
     public static final double scoreSpeed = 0.25;
     public static final double retractSpeed = -0.15;
   }

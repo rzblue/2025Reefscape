@@ -16,8 +16,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,11 +23,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AprilTagVision;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
-import monologue.Logged;
-import monologue.Annotations.Log;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import monologue.Annotations.Log;
+import monologue.Logged;
 
 public class Swerve extends SubsystemBase implements Logged {
   public SwerveDrivePoseEstimator swervePoseEstimator;
@@ -101,25 +98,23 @@ public class Swerve extends SubsystemBase implements Logged {
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(
                     translation.getX(), translation.getY(), rotation, getHeading())
                 : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
-
-    for (SwerveModule mod : mSwerveMods) {
-      mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
-    }
+    setModuleStates(swerveModuleStates, isOpenLoop);
   }
 
   public void driveRobotRelative(ChassisSpeeds speeds) {
     SwerveModuleState[] swerveModuleStates =
         Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
-    setModuleStates(swerveModuleStates);
+    setModuleStates(swerveModuleStates, false);
   }
 
   /* Used by SwerveControllerCommand in Auto */
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
+  public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
+    log("Closed Loop", !isOpenLoop);
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
+    log("Requested Module States", desiredStates);
 
     for (SwerveModule mod : mSwerveMods) {
-      mod.setDesiredState(desiredStates[mod.moduleNumber], false);
+      mod.setDesiredState(desiredStates[mod.moduleNumber], isOpenLoop);
     }
   }
 
