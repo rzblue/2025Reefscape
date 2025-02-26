@@ -2,6 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -14,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -56,6 +61,36 @@ public class Swerve extends SubsystemBase {
             Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), new Pose2d());
 
     vision = new AprilTagVision();
+
+    RobotConfig config;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+      // TODO: handle gracefully
+      throw new RuntimeException("Failed to load config");
+    }
+    AutoBuilder.configure(
+        this::getPose,
+        this::setPose,
+        this::getRobotRelativeChassisSpeeds,
+        (speeds, feedforwards) -> driveRobotRelative(speeds),
+        new PPHolonomicDriveController(
+            new PIDConstants(Constants.AutoConstants.kPXController),
+            new PIDConstants(Constants.AutoConstants.kPThetaController)),
+        config,
+        this::shouldFlipPath,
+        this // Reference to this subsystem to set requirements
+        );
+  }
+
+  public boolean shouldFlipPath() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Red;
+    }
+    return false;
   }
 
   public void drive(
@@ -71,6 +106,12 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
+  }
+
+  public void driveRobotRelative(ChassisSpeeds speeds) {
+    SwerveModuleState[] swerveModuleStates =
+        Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
+    setModuleStates(swerveModuleStates);
   }
 
   /* Used by SwerveControllerCommand in Auto */
@@ -146,7 +187,7 @@ public class Swerve extends SubsystemBase {
           drive(
               new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
               rotationVal * Constants.Swerve.maxAngularVelocity,
-            !robotCentric,
+              !robotCentric,
               true);
         });
   }
@@ -173,4 +214,17 @@ public class Swerve extends SubsystemBase {
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
   }
+
+  public ChassisSpeeds getRobotRelativeChassisSpeeds() {
+    return Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
+  }
 }
+
+    // AutoBuilder.configureHolonomic(
+    //   this::getPose,
+    //   this::setPose,
+    //   this::getRobotRelativeChassisSpeeds,
+    //   this::driveRobotRelative,
+    //   Constants.AutoConstants.pathFollowerConfig,
+    //   this::shouldFlipPath,
+    //   this);

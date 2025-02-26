@@ -19,8 +19,10 @@ public class AprilTagVision {
   private List<VisionCamera> cameras = new ArrayList<>();
 
   public AprilTagVision() {
-    addCamera("ReefCam", CameraConstants.reefCamName, CameraConstants.reefCamTransform);
-    addCamera("CoralCam", CameraConstants.coralCamName, CameraConstants.coralCamTransform);
+    if(!Constants.isAlpha) {
+      addCamera("ReefCam", CameraConstants.reefCamName, CameraConstants.reefCamTransform);
+      addCamera("CoralCam", CameraConstants.coralCamName, CameraConstants.coralCamTransform);
+    }
   }
 
   public void addCamera(String name, String photonName, Transform3d robotToCamera) {

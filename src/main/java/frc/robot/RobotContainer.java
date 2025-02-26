@@ -1,9 +1,12 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -32,6 +35,10 @@ public class RobotContainer implements Logged {
   private final AlgaeKicker algaeKicker = new AlgaeKicker();
   private final Climber climber = new Climber();
 
+  private final SendableChooser<Command> autoChooser;
+
+  private final ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerve.setDefaultCommand(
@@ -43,6 +50,10 @@ public class RobotContainer implements Logged {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    setupDashboard();
   }
 
   /**
@@ -94,12 +105,17 @@ public class RobotContainer implements Logged {
         .onTrue(climber.runOnce(() -> climber.reset()).ignoringDisable(true));
   }
 
+  public void setupDashboard() {
+    driverTab.add(autoChooser).withPosition(0, 0).withSize(2, 1);
+    Shuffleboard.selectTab("Driver");
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Commands.none();
+    return autoChooser.getSelected();
   }
 }
