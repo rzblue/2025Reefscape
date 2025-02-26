@@ -26,7 +26,7 @@ import frc.robot.Constants;
 import frc.robot.SwerveModule;
 import java.util.function.DoubleSupplier;
 
-public class Swerve extends SubsystemBase {
+public class Swerve extends SubsystemBase implements Logged {
   public SwerveDriveOdometry swerveOdometry;
   public SwerveModule[] mSwerveMods;
   public Pigeon2 gyro;
@@ -125,6 +125,7 @@ public class Swerve extends SubsystemBase {
     return states;
   }
 
+  
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
     for (SwerveModule mod : mSwerveMods) {
