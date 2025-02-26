@@ -215,8 +215,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kPXController = 3;
+    public static final double kPXController = 6;
     public static final double kPYController = 3;
-    public static final double kPThetaController = 5;
+    public static final double kPThetaController = 10;
   }
 }

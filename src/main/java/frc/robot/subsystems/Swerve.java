@@ -25,19 +25,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AprilTagVision;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
+import monologue.Logged;
+import monologue.Annotations.Log;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-public class Swerve extends SubsystemBase {
+public class Swerve extends SubsystemBase implements Logged {
   public SwerveDrivePoseEstimator swervePoseEstimator;
   public SwerveModule[] mSwerveMods;
   public Pigeon2 gyro;
   public Canandgyro canandgyro;
 
   private AprilTagVision vision;
-
-  private StructPublisher<Pose2d> posePub =
-      NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
 
   public Swerve() {
     gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -123,6 +123,7 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  @Log
   public SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (SwerveModule mod : mSwerveMods) {
@@ -204,7 +205,7 @@ public class Swerve extends SubsystemBase {
           }
         },
         getPose());
-    posePub.set(swervePoseEstimator.getEstimatedPosition());
+    log("pose", swervePoseEstimator.getEstimatedPosition());
     for (SwerveModule mod : mSwerveMods) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
