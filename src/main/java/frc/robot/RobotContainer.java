@@ -71,18 +71,18 @@ public class RobotContainer implements Logged {
     driver.y().onTrue(new InstantCommand(() -> swerve.zeroHeading()));
 
     operator.b().onTrue(elevator.positionCommand(0)); // Stow
-    operator.a().onTrue(elevator.positionCommand(9.5)); // L2
-    operator.x().onTrue(elevator.positionCommand(25.5)); // L3
-    operator.y().onTrue(elevator.positionCommand(50)); // L4(?)/max
+    operator.a().onTrue(elevator.positionCommand(9.5 / 10.86)); // L2
+    operator.x().onTrue(elevator.positionCommand(25.5 / 10.86)); // L3
+    operator.y().onTrue(elevator.positionCommand(50 / 10.86)); // L4(?)/max
 
     // Bump down
     operator
         .axisLessThan(XboxController.Axis.kLeftY.value, -0.2)
-        .onTrue(elevator.relativePositionCommand(1));
+        .onTrue(elevator.relativePositionCommand(1 / 10.86));
     // Bump Up
     operator
         .axisGreaterThan(XboxController.Axis.kLeftY.value, 0.2)
-        .onTrue(elevator.relativePositionCommand(-1));
+        .onTrue(elevator.relativePositionCommand(-1 / 10.86));
 
     // Intake
     operator

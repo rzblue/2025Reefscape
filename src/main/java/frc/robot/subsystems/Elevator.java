@@ -5,9 +5,13 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.reduxrobotics.sensors.canandmag.Canandmag;
+import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.MultiturnEncoder;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
@@ -18,10 +22,9 @@ public class Elevator extends SubsystemBase implements Logged {
   private final Follower followReq = new Follower(leader.getDeviceID(), false);
   private final MotionMagicVoltage posRequest = new MotionMagicVoltage(0);
 
-  MultiturnEncoder multiturnEncoder = new MultiturnEncoder(1, 2, 21, 26);
+  private final Canandmag encoder = new Canandmag(1);
 
   public Elevator() {
-    multiturnEncoder.zero();
     var config = new TalonFXConfiguration();
     config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
     config.CurrentLimits.withStatorCurrentLimit(60)
@@ -29,16 +32,18 @@ public class Elevator extends SubsystemBase implements Logged {
         .withSupplyCurrentLimit(40)
         .withSupplyCurrentLowerLimit(40)
         .withSupplyCurrentLimitEnable(true);
+    config.Feedback.withSensorToMechanismRatio(10.86);
 
     follower.getConfigurator().apply(config);
 
-    config.SoftwareLimitSwitch.withForwardSoftLimitThreshold(52.4)
+    config.SoftwareLimitSwitch.withForwardSoftLimitThreshold(52.4 / 10.86)
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitThreshold(0)
         .withReverseSoftLimitEnable(true);
 
-    config.Slot0.withKP(3);
-    config.MotionMagic.withMotionMagicAcceleration(400).withMotionMagicCruiseVelocity(100);
+    config.Slot0.withKP(3 * 10.86);
+    config.MotionMagic.withMotionMagicAcceleration(400 / 10.86)
+        .withMotionMagicCruiseVelocity(100 / 10.86);
 
     leader.getConfigurator().apply(config);
     follower.setControl(followReq);
@@ -48,6 +53,27 @@ public class Elevator extends SubsystemBase implements Logged {
     leader.getVelocity().setUpdateFrequency(50);
     leader.getDutyCycle().setUpdateFrequency(100);
     leader.optimizeBusUtilization();
+
+    var encoderSettings =
+        new CanandmagSettings()
+            .setPositionFramePeriod(0.01)
+            .setStatusFramePeriod(1)
+            .setVelocityFramePeriod(0);
+    encoder.setSettings(encoderSettings);
+    initializePosition();
+  }
+
+  private void initializePosition() {
+    double initTime = Timer.getFPGATimestamp();
+    // Make sure we've received an encoder update.
+    while (encoder.getPositionFrame().getTimestamp() < initTime) {
+      if ((Timer.getFPGATimestamp() - initTime) > 0.1) {
+        DriverStation.reportWarning("Elevator: encoder initialization failed.", false);
+        return;
+      }
+      Timer.delay(0.02);
+    }
+    leader.setPosition(MathUtil.inputModulus(getExternalPosition(), -0.25, 0.75));
   }
 
   public void setGoal(double position) {
@@ -67,11 +93,16 @@ public class Elevator extends SubsystemBase implements Logged {
     return leader.getPosition().getValueAsDouble();
   }
 
+  @Log(key = "external encoder position")
+  public double getExternalPosition() {
+    return encoder.getAbsPosition() - 0.38836669921875;
+  }
+
   @Override
   public void periodic() {
+    log("Goal", posRequest.Position);
     log("Velocity", leader.getVelocity().getValueAsDouble());
     log("StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
     log("SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
-    log("Multiturn Encoder", multiturnEncoder.get());
   }
 }
