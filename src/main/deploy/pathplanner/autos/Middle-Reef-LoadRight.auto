@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left-Reef"
+            "pathName": "Middle-Reef2"
           }
         },
         {
@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "elevatorL2"
+                  "name": "elevatorL4"
                 }
               }
             ]
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Lreef-Load"
+            "pathName": "MReef-Load2"
           }
         }
       ]

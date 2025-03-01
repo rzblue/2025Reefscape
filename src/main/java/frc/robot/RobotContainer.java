@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
 import monologue.Logged;
+import com.pathplanner.lib.auto.NamedCommands; 
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -29,6 +30,7 @@ public class RobotContainer implements Logged {
 
   /* Driver Buttons */
   private final Trigger robotCentric = driver.leftBumper();
+  private final Trigger slowMode = driver.rightBumper();
 
   /* Subsystems */
   private final Swerve swerve = new Swerve();
@@ -48,8 +50,15 @@ public class RobotContainer implements Logged {
             () -> -driver.getLeftY(),
             () -> -driver.getLeftX(),
             () -> -driver.getRightX(),
-            robotCentric));
+            robotCentric,
+            slowMode));
 
+    NamedCommands.registerCommand("shootCoral", coralHead.smartScore());
+    NamedCommands.registerCommand("intakeCoral", coralHead.smartIntake());
+    NamedCommands.registerCommand("elevatorStow", elevator.positionCommand(0));
+    NamedCommands.registerCommand("elevatorL2", elevator.positionCommand(9.5));
+    NamedCommands.registerCommand("elevatorL3", elevator.positionCommand(25.5));
+    NamedCommands.registerCommand("elevatorL4", elevator.positionCommand(49));
     // Configure the button bindings
     configureButtonBindings();
 
@@ -71,18 +80,20 @@ public class RobotContainer implements Logged {
     driver.y().onTrue(new InstantCommand(() -> swerve.zeroHeading()));
 
     operator.b().onTrue(elevator.positionCommand(0)); // Stow
-    operator.a().onTrue(elevator.positionCommand(9.5 / 10.86)); // L2
-    operator.x().onTrue(elevator.positionCommand(25.5 / 10.86)); // L3
-    operator.y().onTrue(elevator.positionCommand(50 / 10.86)); // L4(?)/max
+    operator.a().onTrue(elevator.positionCommand(9.5)); // L2
+    operator.x().onTrue(elevator.positionCommand(25.5)); // L3
+    operator.y().onTrue(elevator.positionCommand(49)); // L4(?)/max
+
+    operator.back().onTrue(elevator.setZero());
 
     // Bump down
     operator
         .axisLessThan(XboxController.Axis.kLeftY.value, -0.2)
-        .onTrue(elevator.relativePositionCommand(1 / 10.86));
+        .onTrue(elevator.relativePositionCommand(1));
     // Bump Up
     operator
         .axisGreaterThan(XboxController.Axis.kLeftY.value, 0.2)
-        .onTrue(elevator.relativePositionCommand(-1 / 10.86));
+        .onTrue(elevator.relativePositionCommand(-1));
 
     // Intake
     operator
@@ -102,7 +113,8 @@ public class RobotContainer implements Logged {
     operator.rightBumper().whileTrue(coralHead.smartExtend());
 
     // Score
-    operator.leftTrigger(.1).whileTrue(coralHead.operatorScore());
+    operator.leftTrigger(.1)
+          .whileTrue(coralHead.operatorScore());
 
     // Retract
     operator.leftBumper().whileTrue(coralHead.operatorRetract());
@@ -111,18 +123,27 @@ public class RobotContainer implements Logged {
     operator.povUp().whileTrue(algaeKicker.kickAlgae());
 
     // Climb
-    operator.back().onTrue(climber.runOnce(() -> climber.deploy()));
+    driver.a().and(driver.x()).onTrue(climber.runOnce(() -> climber.deploy()));
     // Reset climber
-    operator.start().onTrue(climber.runOnce(() -> climber.reset()));
+    driver.start().onTrue(climber.runOnce(() -> climber.reset()));
 
     RobotModeTriggers.disabled()
         .onTrue(climber.runOnce(() -> climber.reset()).ignoringDisable(true));
+    
+    RobotModeTriggers.autonomous().onTrue(algaeKicker.extend());
   }
 
   public void setupDashboard() {
     driverTab.add(autoChooser).withPosition(0, 0).withSize(2, 1);
     Shuffleboard.selectTab("Driver");
   }
+
+
+
+  
+ 
+
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

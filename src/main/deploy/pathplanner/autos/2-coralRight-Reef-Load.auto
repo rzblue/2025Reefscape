@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left-Reef"
+            "pathName": "Start-Trough"
           }
         },
         {
@@ -44,7 +44,38 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Lreef-Load"
+            "pathName": "Trough-leave"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2ndCoralRightLoad"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeCoral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevatorL4"
+                }
+              }
+            ]
           }
         }
       ]

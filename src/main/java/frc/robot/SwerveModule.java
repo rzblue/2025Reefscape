@@ -52,6 +52,7 @@ public class SwerveModule {
 
     mDriveMotor.getVelocity().setUpdateFrequency(100);
     mDriveMotor.getPosition().setUpdateFrequency(100);
+    mDriveMotor.getMotorVoltage().setUpdateFrequency(100);
     mDriveMotor.optimizeBusUtilization();
     mAngleMotor.getVelocity().setUpdateFrequency(100);
     mAngleMotor.getPosition().setUpdateFrequency(100);
@@ -190,6 +191,10 @@ public class SwerveModule {
   public SwerveModuleState getState() {
     return new SwerveModuleState(
         motorRotToWheelMeter(mDriveMotor.getVelocity().getValueAsDouble()), getAngle());
+  }
+
+  public double getVoltage() {
+    return mDriveMotor.getMotorVoltage().getValueAsDouble();
   }
 
   public SwerveModulePosition getPosition() {

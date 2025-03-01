@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left-Reef"
+            "pathName": "Middle-Reef"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0
           }
         },
         {
@@ -23,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "elevatorL2"
+                  "name": "elevatorL4"
                 }
               }
             ]
@@ -44,7 +50,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Lreef-Load"
+            "pathName": "Reef-right load"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2ndCoralLeftLoad"
           }
         }
       ]

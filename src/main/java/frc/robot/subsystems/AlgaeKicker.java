@@ -62,6 +62,10 @@ public class AlgaeKicker extends SubsystemBase implements Logged {
   public Command kickAlgae() {
     return outputCommand(kickSpeed);
   }
+  public Command extend() {
+    return outputCommand(-1).withTimeout(0.5);
+  }
+
 
   @Override
   public void periodic() {
