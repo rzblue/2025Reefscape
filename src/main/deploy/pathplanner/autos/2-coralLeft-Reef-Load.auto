@@ -77,6 +77,18 @@
               }
             ]
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorStow"
+          }
         }
       ]
     }

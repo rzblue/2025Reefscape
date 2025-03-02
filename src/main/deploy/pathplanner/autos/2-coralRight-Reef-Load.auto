@@ -48,15 +48,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "2ndCoralRightLoad"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "intakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2ndCoralRightLoad"
           }
         },
         {
@@ -76,6 +76,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorStow"
           }
         }
       ]

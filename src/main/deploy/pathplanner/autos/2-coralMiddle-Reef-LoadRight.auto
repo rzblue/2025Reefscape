@@ -72,10 +72,22 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "shootCoral"
+                  "name": "elevatorL4"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorStow"
           }
         }
       ]
