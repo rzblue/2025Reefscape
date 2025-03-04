@@ -23,7 +23,7 @@ public class AprilTagVision implements Logged {
   public AprilTagVision() {
     if (!Constants.isAlpha) {
       addCamera("ReefCam", CameraConstants.reefCamName, CameraConstants.reefCamTransform);
-      addCamera("CoralCam", CameraConstants.coralCamName, CameraConstants.coralCamTransform);
+      // addCamera("CoralCam", CameraConstants.coralCamName, CameraConstants.coralCamTransform);
     }
   }
 
