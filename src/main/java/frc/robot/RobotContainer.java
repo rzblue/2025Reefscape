@@ -1,18 +1,18 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.util.CommandUtils;
 import frc.robot.subsystems.*;
 import monologue.Logged;
 import com.pathplanner.lib.auto.NamedCommands; 
@@ -99,15 +99,12 @@ public class RobotContainer implements Logged {
     operator
         .rightTrigger(.1)
         // .whileTrue(elevator.positionCommand(0).alongWith(coralHead.operatorIntake()));
-        .whileTrue(
-            elevator
-                .positionCommand(0)
-                .alongWith(coralHead.smartIntake())
-                .alongWith(
-                    Commands.waitUntil(coralHead::coralAquired)
-                        .andThen(
-                            Commands.runOnce(() -> operator.setRumble(RumbleType.kBothRumble, 1))))
-                .finallyDo(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+        .whileTrue(elevator.positionCommand(0).alongWith(coralHead.smartIntake()));
+
+    operator
+        .rightTrigger(0.1)
+        .and(coralHead::coralAquired)
+        .whileTrue(CommandUtils.rumbleController(driver, 1));
 
     // Extend
     operator.rightBumper().whileTrue(coralHead.smartExtend());
