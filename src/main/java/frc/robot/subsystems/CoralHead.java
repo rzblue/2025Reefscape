@@ -79,15 +79,14 @@ public class CoralHead extends SubsystemBase implements Logged {
   public Command smartExtend() {
     return slowIntake().until(() -> coralExtended());
   }
+
   public Command smartScore() {
-    return operatorScore()
-      .until(() -> coralClear());
+    return operatorScore().until(() -> coralClear());
   }
 
   public Command operatorRetract() {
     return outputCommand(retractSpeed);
   }
-
 
   public Command smartRetract() {
     return operatorRetract()

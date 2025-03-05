@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.CommandUtils;
 import frc.robot.subsystems.*;
 import monologue.Logged;
-import com.pathplanner.lib.auto.NamedCommands; 
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -110,8 +109,7 @@ public class RobotContainer implements Logged {
     operator.rightBumper().whileTrue(coralHead.smartExtend());
 
     // Score
-    operator.leftTrigger(.1)
-          .whileTrue(coralHead.operatorScore());
+    operator.leftTrigger(.1).whileTrue(coralHead.operatorScore());
 
     // Retract
     operator.leftBumper().whileTrue(coralHead.operatorRetract());
@@ -126,7 +124,7 @@ public class RobotContainer implements Logged {
 
     RobotModeTriggers.disabled()
         .onTrue(climber.runOnce(() -> climber.reset()).ignoringDisable(true));
-    
+
     RobotModeTriggers.autonomous().onTrue(algaeKicker.extend());
   }
 
@@ -134,13 +132,6 @@ public class RobotContainer implements Logged {
     driverTab.add(autoChooser).withPosition(0, 0).withSize(2, 1);
     Shuffleboard.selectTab("Driver");
   }
-
-
-
-  
- 
-
-  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

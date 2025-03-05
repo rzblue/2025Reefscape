@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import frc.robot.Constants;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -9,8 +7,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,8 +39,7 @@ public class Elevator extends SubsystemBase implements Logged {
         .withReverseSoftLimitEnable(true);
 
     config.Slot0.withKP(3);
-    config.MotionMagic.withMotionMagicAcceleration(200)
-        .withMotionMagicCruiseVelocity(60);
+    config.MotionMagic.withMotionMagicAcceleration(200).withMotionMagicCruiseVelocity(60);
 
     leader.getConfigurator().apply(config);
     follower.setControl(followReq);
@@ -69,7 +64,7 @@ public class Elevator extends SubsystemBase implements Logged {
   private void initializePosition() {
     double initTime = Timer.getFPGATimestamp();
     // Make sure we've received an encoder update.
-    /* 
+    /*
     while (encoder.getPositionFrame().getTimestamp() < initTime) {
       if ((Timer.getFPGATimestamp() - initTime) > 0.1) {
         DriverStation.reportWarning("Elevator: encoder initialization failed.", false);
@@ -80,7 +75,6 @@ public class Elevator extends SubsystemBase implements Logged {
     leader.setPosition(MathUtil.inputModulus(getExternalPosition(), -0.25, 0.75));
     */
     leader.setPosition(0);
-
   }
 
   public void setGoal(double position) {
@@ -88,7 +82,7 @@ public class Elevator extends SubsystemBase implements Logged {
   }
 
   public Command setZero() {
-    return runOnce(()-> leader.setPosition(0));
+    return runOnce(() -> leader.setPosition(0));
   }
 
   public Command positionCommand(double position) {
@@ -110,7 +104,7 @@ public class Elevator extends SubsystemBase implements Logged {
 
   @Log(key = "external encoder position")
   public double getExternalPosition() {
-    return encoder.getAbsPosition() - 0.38836669921875;
+    return encoder.getAbsPosition();
   }
 
   @Override
@@ -119,7 +113,7 @@ public class Elevator extends SubsystemBase implements Logged {
     log("Velocity", leader.getVelocity().getValueAsDouble());
     log("StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
     log("SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
-    log("Output", leader.getMotorVoltage().getValueAsDouble());
-    log("VBus", leader.getSupplyVoltage().getValueAsDouble());
+    log("OutputVoltage", leader.getMotorVoltage().getValueAsDouble());
+    log("SupplyVoltage", leader.getSupplyVoltage().getValueAsDouble());
   }
 }

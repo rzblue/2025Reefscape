@@ -170,7 +170,11 @@ public class Swerve extends SubsystemBase implements Logged {
   }
 
   public Command teleopDriveCommand(
-      DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, BooleanSupplier rCent, BooleanSupplier slow) {
+      DoubleSupplier x,
+      DoubleSupplier y,
+      DoubleSupplier theta,
+      BooleanSupplier rCent,
+      BooleanSupplier slow) {
     return run(
         () -> {
           /* Get Values, Deadband*/
@@ -179,14 +183,13 @@ public class Swerve extends SubsystemBase implements Logged {
           double rotationVal = MathUtil.applyDeadband(theta.getAsDouble(), Constants.stickDeadband);
           Boolean robotCentric = rCent.getAsBoolean();
           if (shouldFlipPath()) {
-            translationVal = translationVal*-1;
-            strafeVal = strafeVal*-1;
+            translationVal = translationVal * -1;
+            strafeVal = strafeVal * -1;
           }
           if (slow.getAsBoolean()) {
-            translationVal = translationVal*0.5;
-            strafeVal = strafeVal*0.5;
+            translationVal = translationVal * 0.5;
+            strafeVal = strafeVal * 0.5;
           }
-
 
           /* Drive */
           drive(
@@ -217,8 +220,7 @@ public class Swerve extends SubsystemBase implements Logged {
           "Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-      SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Voltage", mod.getVoltage());
+      SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Voltage", mod.getVoltage());
     }
   }
 
