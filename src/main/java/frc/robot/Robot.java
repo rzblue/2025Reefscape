@@ -6,8 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.util.RadioLogger;
 import monologue.Monologue;
 
 /**
@@ -21,17 +23,26 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private final RadioLogger radioLogger = new RadioLogger(1024);
+  Timer userCodeTimer = new Timer();
+  Timer dtTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
+
+    userCodeTimer.start();
+    dtTimer.start();
     DriverStation.silenceJoystickConnectionWarning(true);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
     Monologue.setupMonologue(m_robotContainer, "Robot", false, false);
+    radioLogger.bind(this);
+    // Threads.setCurrentThreadPriority(true, 20);
   }
 
   /**
@@ -43,12 +54,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    m_robotContainer.log("Timing/DTSeconds", dtTimer.get());
+    dtTimer.restart();
+    userCodeTimer.restart();
+
     Monologue.updateAll();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    m_robotContainer.log("Timing/UserCodeSeconds", userCodeTimer.get());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
