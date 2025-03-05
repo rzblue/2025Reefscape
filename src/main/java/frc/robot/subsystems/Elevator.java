@@ -43,7 +43,7 @@ public class Elevator extends SubsystemBase implements Logged {
         .withReverseSoftLimitEnable(true);
 
     config.Slot0.withKP(3);
-    config.MotionMagic.withMotionMagicAcceleration(100)
+    config.MotionMagic.withMotionMagicAcceleration(200)
         .withMotionMagicCruiseVelocity(60);
 
     leader.getConfigurator().apply(config);
@@ -53,6 +53,8 @@ public class Elevator extends SubsystemBase implements Logged {
     leader.getSupplyCurrent().setUpdateFrequency(50);
     leader.getVelocity().setUpdateFrequency(50);
     leader.getDutyCycle().setUpdateFrequency(100);
+    leader.getMotorVoltage().setUpdateFrequency(50);
+    leader.getSupplyVoltage().setUpdateFrequency(50);
     leader.optimizeBusUtilization();
 
     var encoderSettings =
@@ -117,5 +119,7 @@ public class Elevator extends SubsystemBase implements Logged {
     log("Velocity", leader.getVelocity().getValueAsDouble());
     log("StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
     log("SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
+    log("Output", leader.getMotorVoltage().getValueAsDouble());
+    log("VBus", leader.getSupplyVoltage().getValueAsDouble());
   }
 }
