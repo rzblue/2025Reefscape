@@ -14,7 +14,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.util.SwerveModuleConstants;
-import org.photonvision.PhotonCamera;
 
 public final class Constants {
 
@@ -191,7 +190,6 @@ public final class Constants {
 
   public static final class CameraConstants {
     public static final String reefCamName = "Arducam_OV9281_3";
-    public static final PhotonCamera reefCam = new PhotonCamera(reefCamName);
     public static final Transform3d reefCamTransform =
         new Transform3d(
             new Translation3d(
@@ -202,7 +200,6 @@ public final class Constants {
                 Units.degreesToRadians(0), Units.degreesToRadians(12), Units.degreesToRadians(0)));
 
     public static final String coralCamName = "Arducam_OV9281_5";
-    public static final PhotonCamera coralCam = new PhotonCamera(coralCamName);
     public static final Transform3d coralCamTransform =
         new Transform3d(
             new Translation3d(
