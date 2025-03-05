@@ -48,6 +48,8 @@ public class AprilTagVision implements Logged {
           poseConsumer.accept(estimatedPose.get());
         }
       }
+
+      log(camera.name() + " Connected", camera.camera().isConnected());
     }
   }
 
