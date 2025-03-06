@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.2785353535353545,
-        "y": 2.9577651515151513
+        "x": 3.713,
+        "y": 2.998
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.211300505050505,
-        "y": 1.4331439393939387
+        "x": 3.0145408163265306,
+        "y": 1.9755102040816326
       },
       "isLocked": false,
-      "linkedName": "MReef-Load2"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "3rdCoralRightReef-Load"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.93151184050788
+    "rotation": 58.97507391799935
   },
   "useDefaultConstraints": true
 }
