@@ -35,7 +35,6 @@ public class CoralHead extends SubsystemBase implements Logged {
     motor.optimizeBusUtilization();
   }
 
-  @Log.Once(key = "init/ok")
   public void setOutput(double value) {
     dcRequest.Output = value;
     motor.setControl(dcRequest);

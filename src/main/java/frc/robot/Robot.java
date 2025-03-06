@@ -23,7 +23,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private final RadioLogger radioLogger = new RadioLogger(1024);
+  private final RadioLogger radioLogger = new RadioLogger();
   Timer userCodeTimer = new Timer();
   Timer dtTimer = new Timer();
 
