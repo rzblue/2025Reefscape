@@ -7,6 +7,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,7 +41,7 @@ public class Elevator extends SubsystemBase implements Logged {
         .withReverseSoftLimitEnable(true);
 
     config.Slot0.withKP(3);
-    config.MotionMagic.withMotionMagicAcceleration(200).withMotionMagicCruiseVelocity(60);
+    config.MotionMagic.withMotionMagicAcceleration(200).withMotionMagicCruiseVelocity(100);
 
     leader.getConfigurator().apply(config);
     follower.setControl(followReq);
@@ -64,17 +66,14 @@ public class Elevator extends SubsystemBase implements Logged {
   private void initializePosition() {
     double initTime = Timer.getFPGATimestamp();
     // Make sure we've received an encoder update.
-    /*
-    while (encoder.getPositionFrame().getTimestamp() < initTime) {
+    while (encoder.getAbsPositionFrame().getTimestamp() < initTime) {
       if ((Timer.getFPGATimestamp() - initTime) > 0.1) {
         DriverStation.reportWarning("Elevator: encoder initialization failed.", false);
         return;
       }
       Timer.delay(0.02);
     }
-    leader.setPosition(MathUtil.inputModulus(getExternalPosition(), -0.25, 0.75));
-    */
-    leader.setPosition(0);
+    leader.setPosition(getExternalPosition());
   }
 
   public void setGoal(double position) {
@@ -104,7 +103,7 @@ public class Elevator extends SubsystemBase implements Logged {
 
   @Log(key = "external encoder position")
   public double getExternalPosition() {
-    return encoder.getAbsPosition();
+    return MathUtil.inputModulus(encoder.getAbsPosition(), -0.15, 0.85) * 10.86;
   }
 
   @Override
