@@ -31,7 +31,7 @@ public class AprilTagVision implements Logged {
     var camera = new PhotonCamera(photonName);
     var estimator =
         new PhotonPoseEstimator(
-            Constants.kOfficialField, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
+            Constants.kOfficialField, PoseStrategy.LOWEST_AMBIGUITY, robotToCamera);
     cameras.add(new VisionCamera(name, camera, estimator));
     // StatusDashboard.addStatusIndicator(name + "Connected", camera::isConnected);
   }
