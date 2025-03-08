@@ -193,11 +193,11 @@ public final class Constants {
     public static final Transform3d reefCamTransform =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(-11.375),
-                Units.inchesToMeters(-10.25),
-                Units.inchesToMeters(29.1875)),
+                Units.inchesToMeters(-9.125),
+                Units.inchesToMeters(-.375),
+                Units.inchesToMeters(21.5625)),
             new Rotation3d(
-                Units.degreesToRadians(0), Units.degreesToRadians(12), Units.degreesToRadians(0)));
+                Units.degreesToRadians(0), Units.degreesToRadians(10), Units.degreesToRadians(0)));
 
     public static final String coralCamName = "Arducam_OV9281_5";
     public static final Transform3d coralCamTransform =
