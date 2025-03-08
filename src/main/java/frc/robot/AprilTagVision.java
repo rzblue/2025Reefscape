@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.CameraConstants;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import monologue.Logged;
 import org.photonvision.EstimatedRobotPose;
@@ -31,9 +32,8 @@ public class AprilTagVision implements Logged {
     var camera = new PhotonCamera(photonName);
     var estimator =
         new PhotonPoseEstimator(
-            Constants.kOfficialField, PoseStrategy.LOWEST_AMBIGUITY, robotToCamera);
+            Constants.kOfficialField, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
     cameras.add(new VisionCamera(name, camera, estimator));
-    // StatusDashboard.addStatusIndicator(name + "Connected", camera::isConnected);
   }
 
   public void processVisionUpdates(Consumer<EstimatedRobotPose> poseConsumer, Pose2d curPose) {
@@ -43,18 +43,29 @@ public class AprilTagVision implements Logged {
       if (!results.isEmpty()) {
         var result = results.get(results.size() - 1);
         var estimatedPose = camera.estimator().update(result);
-        if (estimatedPose.isPresent() && shouldAcceptUpdate(result, estimatedPose.get(), curPose)) {
-          log(camera.name() + "EstimatedPose", estimatedPose.get().estimatedPose);
-          poseConsumer.accept(estimatedPose.get());
+        if (estimatedPose.isPresent()) {
+          log(camera.name() + "EstimatedPoseRaw", estimatedPose.get().estimatedPose);
+          if (shouldAcceptUpdate(result, estimatedPose.get(), curPose)) {
+            poseConsumer.accept(estimatedPose.get());
+            log(camera.name() + "EstimatedPoseAccepted", estimatedPose.get().estimatedPose);
+          }
         }
       }
-
       log(camera.name() + " Connected", camera.camera().isConnected());
     }
   }
 
+  // Only reef tags
+  private static final Set<Integer> allowedTags =
+      Set.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
+
   public boolean shouldAcceptUpdate(
       PhotonPipelineResult result, EstimatedRobotPose estimatedRobotPose, Pose2d curPose) {
+
+    // Only accept reef tags
+    if (!allowedTags.contains(estimatedRobotPose.targetsUsed.get(0).fiducialId)) {
+      return false;
+    }
 
     // Reject if off field
     if (!translationWithinField(estimatedRobotPose.estimatedPose.toPose2d().getTranslation())) {
@@ -63,6 +74,11 @@ public class AprilTagVision implements Logged {
 
     // Reject if > 6" above or below the ground
     if (Math.abs(estimatedRobotPose.estimatedPose.getZ()) > Units.inchesToMeters(6)) {
+      return false;
+    }
+
+    // Reject if high ambiguity
+    if (estimatedRobotPose.targetsUsed.get(0).poseAmbiguity > 0.5) {
       return false;
     }
 
@@ -81,6 +97,8 @@ public class AprilTagVision implements Logged {
     // Reject if tag is too far away
     var distanceToTag =
         curPose.getTranslation().getDistance(apriltagPose.get().getTranslation().toTranslation2d());
+    log("distance to tag", distanceToTag);
+
     if (distanceToTag > 7) {
       return false;
     }

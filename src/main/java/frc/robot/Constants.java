@@ -21,7 +21,7 @@ public final class Constants {
 
   public static final double stickDeadband = 0.04;
 
-  public static final boolean aprilTagsEnabled = false;
+  public static final boolean aprilTagsEnabled = true;
 
   public static final AprilTagFieldLayout kOfficialField =
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
