@@ -114,7 +114,7 @@ public class CoralHead extends SubsystemBase implements Logged {
   }
 
   public boolean coralAquired() {
-    return getMidSensor();
+    return getMidSensor() || getFrontSensor();
   }
 
   public boolean coralStowed() {
