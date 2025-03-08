@@ -11,6 +11,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import monologue.Annotations.Log;
 import monologue.Logged;
@@ -85,7 +86,7 @@ public class Elevator extends SubsystemBase implements Logged {
   }
 
   public Command positionCommand(double position) {
-    return runOnce(() -> setGoal(position));
+    return runOnce(() -> setGoal(position)).andThen(Commands.waitUntil((this::atGoal)));
   }
 
   public Command relativePositionCommand(double relativePos) {
@@ -94,6 +95,16 @@ public class Elevator extends SubsystemBase implements Logged {
 
   public boolean isStowed() {
     return getPosition() < 3;
+  }
+
+  @Log
+  public boolean atGoal() {
+    return Math.abs(getPosition() - posRequest.Position) < 1 && Math.abs(getVelocity()) < 1;
+  }
+
+  @Log(key = "Velocity")
+  public double getVelocity() {
+    return leader.getVelocity().getValueAsDouble();
   }
 
   @Log(key = "Position")
@@ -109,7 +120,6 @@ public class Elevator extends SubsystemBase implements Logged {
   @Override
   public void periodic() {
     log("Goal", posRequest.Position);
-    log("Velocity", leader.getVelocity().getValueAsDouble());
     log("StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
     log("SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
     log("OutputVoltage", leader.getMotorVoltage().getValueAsDouble());
