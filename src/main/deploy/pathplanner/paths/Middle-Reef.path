@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.014030612244898,
-        "y": 3.1793367346938766
+        "x": 6.591,
+        "y": 4.609999999999999
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.302806122448979,
-        "y": 2.9903061224489784
+        "x": 4.993939393939394,
+        "y": 5.24469696969697
       },
       "prevControl": {
-        "x": 6.466836734693877,
-        "y": 3.129591836734693
+        "x": 6.157970006184292,
+        "y": 5.383982683982685
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef-J"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 122.09259132873412
+    "rotation": -119.60445074600499
   },
   "reversed": false,
   "folder": null,
