@@ -16,9 +16,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
+import static frc.robot.Constants.ElevatorConstants.*;
+
 public class Elevator extends SubsystemBase implements Logged {
-  private final TalonFX leader = new TalonFX(41);
-  private final TalonFX follower = new TalonFX(42);
+  private final TalonFX leader = new TalonFX(leaderId);
+  private final TalonFX follower = new TalonFX(followerId);
 
   private final Follower followReq = new Follower(leader.getDeviceID(), false);
   private final MotionMagicVoltage posRequest = new MotionMagicVoltage(0);
@@ -89,6 +91,22 @@ public class Elevator extends SubsystemBase implements Logged {
     return runOnce(() -> setGoal(position)).andThen(Commands.waitUntil((this::atGoal)));
   }
 
+  public Command stowCommand() {
+    return positionCommand(stowSetpoint);
+  }
+
+  public Command l2Command() {
+    return positionCommand(l2Setpoint);
+  }
+
+  public Command l3Command() {
+    return positionCommand(l3Setpoint);
+  }
+
+  public Command l4Command() {
+    return positionCommand(l4Setpoint);
+  }
+
   public Command relativePositionCommand(double relativePos) {
     return runOnce(() -> setGoal(posRequest.Position + relativePos));
   }
@@ -114,7 +132,7 @@ public class Elevator extends SubsystemBase implements Logged {
 
   @Log(key = "external encoder position")
   public double getExternalPosition() {
-    return MathUtil.inputModulus(encoder.getAbsPosition(), -0.15, 0.85) * 10.86;
+    return MathUtil.inputModulus(encoder.getAbsPosition(), -0.15, 0.85) * gearRatio;
   }
 
   @Override

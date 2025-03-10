@@ -54,10 +54,10 @@ public class RobotContainer implements Logged {
 
     NamedCommands.registerCommand("shootCoral", coralHead.smartScore());
     NamedCommands.registerCommand("intakeCoral", coralHead.smartIntake());
-    NamedCommands.registerCommand("elevatorStow", elevator.positionCommand(0));
-    NamedCommands.registerCommand("elevatorL2", elevator.positionCommand(9.5));
-    NamedCommands.registerCommand("elevatorL3", elevator.positionCommand(25.5));
-    NamedCommands.registerCommand("elevatorL4", elevator.positionCommand(49));
+    NamedCommands.registerCommand("elevatorStow", elevator.stowCommand());
+    NamedCommands.registerCommand("elevatorL2", elevator.l2Command());
+    NamedCommands.registerCommand("elevatorL3", elevator.l3Command());
+    NamedCommands.registerCommand("elevatorL4", elevator.l4Command());
     // Configure the button bindings
     configureButtonBindings();
 
@@ -78,10 +78,10 @@ public class RobotContainer implements Logged {
     // Zero heading
     driver.y().onTrue(new InstantCommand(() -> swerve.zeroHeading()));
 
-    operator.b().onTrue(elevator.positionCommand(0)); // Stow
-    operator.a().onTrue(elevator.positionCommand(9.5)); // L2
-    operator.x().onTrue(elevator.positionCommand(25.5)); // L3
-    operator.y().onTrue(elevator.positionCommand(49)); // L4(?)/max
+    operator.b().onTrue(elevator.stowCommand()); // Stow
+    operator.a().onTrue(elevator.l2Command()); // L2
+    operator.x().onTrue(elevator.l3Command()); // L3
+    operator.y().onTrue(elevator.l4Command()); // L4(?)/max
 
     operator.back().onTrue(elevator.setZero());
 
