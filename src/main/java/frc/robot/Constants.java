@@ -189,6 +189,8 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants {
+    public static final boolean useExternalPosition = false;
+
     public static final int leaderId = 41;
     public static final int followerId = 42;
     public static final double gearRatio = 10.86;
@@ -196,7 +198,7 @@ public final class Constants {
     public static final double stowSetpoint = 0;
     public static final double l2Setpoint = 8.5;
     public static final double l3Setpoint = 23.5;
-    public static final double l4Setpoint = 49;
+    public static final double l4Setpoint = 49.5;
   }
 
   public static final class CameraConstants {
