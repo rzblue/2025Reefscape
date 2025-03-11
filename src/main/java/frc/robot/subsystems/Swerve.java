@@ -60,7 +60,7 @@ public class Swerve extends SubsystemBase implements Logged {
             Constants.Swerve.swerveKinematics,
             getGyroYaw(),
             getModulePositions(),
-            new Pose2d(),
+            new Pose2d(new Translation2d(), Rotation2d.fromDegrees(180)),
             VecBuilder.fill(0.1, 0.1, 0.1),
             VecBuilder.fill(0.3, 0.3, Units.degreesToRadians(45)));
 
