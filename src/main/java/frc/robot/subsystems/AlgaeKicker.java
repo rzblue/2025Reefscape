@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.AlgaeKickerConstants.*;
 
 import com.revrobotics.REVLibError;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -18,6 +19,8 @@ import monologue.Logged;
 public class AlgaeKicker extends SubsystemBase implements Logged {
   private final SparkFlex motor = new SparkFlex(1, MotorType.kBrushless);
 
+  private final RelativeEncoder encoder = motor.getEncoder();
+
   private final REVLibError configureStatus;
 
   public AlgaeKicker() {
@@ -31,7 +34,7 @@ public class AlgaeKicker extends SubsystemBase implements Logged {
     config.signals.faultsPeriodMs(500);
     // Status 2: prim. encoder velocity
     config.signals.primaryEncoderVelocityAlwaysOn(true);
-    config.signals.primaryEncoderVelocityPeriodMs(100);
+    config.signals.primaryEncoderVelocityPeriodMs(20);
 
     configureStatus =
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -77,5 +80,6 @@ public class AlgaeKicker extends SubsystemBase implements Logged {
     log("temperature", motor.getMotorTemperature());
     log("faults", motor.getFaults().rawBits);
     log("warnings", motor.getWarnings().rawBits);
+    log("velocity", encoder.getVelocity());
   }
 }
