@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.ElevatorConstants.*;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -15,8 +17,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import monologue.Annotations.Log;
 import monologue.Logged;
-
-import static frc.robot.Constants.ElevatorConstants.*;
 
 public class Elevator extends SubsystemBase implements Logged {
   private final TalonFX leader = new TalonFX(leaderId);
@@ -67,16 +67,21 @@ public class Elevator extends SubsystemBase implements Logged {
   }
 
   private void initializePosition() {
-    double initTime = Timer.getFPGATimestamp();
-    // Make sure we've received an encoder update.
-    while (encoder.getAbsPositionFrame().getTimestamp() < initTime) {
-      if ((Timer.getFPGATimestamp() - initTime) > 0.1) {
-        DriverStation.reportWarning("Elevator: encoder initialization failed.", false);
-        return;
+    if (useExternalPosition) {
+
+      double initTime = Timer.getFPGATimestamp();
+      // Make sure we've received an encoder update.
+      while (encoder.getAbsPositionFrame().getTimestamp() < initTime) {
+        if ((Timer.getFPGATimestamp() - initTime) > 0.1) {
+          DriverStation.reportWarning("Elevator: encoder initialization failed.", false);
+          return;
+        }
+        Timer.delay(0.02);
       }
-      Timer.delay(0.02);
+      leader.setPosition(getExternalPosition());
+    } else {
+      leader.setPosition(0);
     }
-    leader.setPosition(getExternalPosition());
   }
 
   public void setGoal(double position) {

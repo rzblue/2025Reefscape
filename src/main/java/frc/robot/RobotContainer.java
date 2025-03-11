@@ -103,7 +103,9 @@ public class RobotContainer implements Logged {
     operator
         .rightTrigger(0.1)
         .and(coralHead::coralAquired)
-        .whileTrue(CommandUtils.rumbleController(operator, 1).alongWith(CommandUtils.rumbleController(driver, 1)));
+        .whileTrue(
+            CommandUtils.rumbleController(operator, 1)
+                .alongWith(CommandUtils.rumbleController(driver, 1)));
 
     // Extend
     operator.rightBumper().whileTrue(coralHead.smartExtend());
