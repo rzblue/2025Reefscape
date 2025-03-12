@@ -83,7 +83,7 @@ public class RobotContainer implements Logged {
     operator.x().onTrue(elevator.l3Command()); // L3
     operator.y().onTrue(elevator.l4Command()); // L4(?)/max
 
-    operator.back().onTrue(elevator.setZero());
+    operator.back().debounce(0.125).onTrue(elevator.currentHome());
 
     // Bump down
     operator

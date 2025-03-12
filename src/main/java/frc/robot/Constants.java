@@ -196,8 +196,8 @@ public final class Constants {
     public static final double gearRatio = 10.86;
 
     public static final double stowSetpoint = 0;
-    public static final double l2Setpoint = 9.5;
-    public static final double l3Setpoint = 24.5;
+    public static final double l2Setpoint = 10.5;
+    public static final double l3Setpoint = 25.5;
     public static final double l4Setpoint = 49.5;
   }
 

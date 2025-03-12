@@ -5,11 +5,14 @@ import static frc.robot.Constants.ElevatorConstants.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,6 +30,8 @@ public class Elevator extends SubsystemBase implements Logged {
 
   private final Canandmag encoder = new Canandmag(1);
 
+  private boolean initialHomeComplete = false;
+
   public Elevator() {
     var config = new TalonFXConfiguration();
     config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
@@ -40,7 +45,7 @@ public class Elevator extends SubsystemBase implements Logged {
 
     config.SoftwareLimitSwitch.withForwardSoftLimitThreshold(52.4)
         .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitThreshold(0)
+        .withReverseSoftLimitThreshold(-10)
         .withReverseSoftLimitEnable(true);
 
     config.Slot0.withKP(3);
@@ -64,6 +69,7 @@ public class Elevator extends SubsystemBase implements Logged {
             .setVelocityFramePeriod(0);
     encoder.setSettings(encoderSettings);
     initializePosition();
+    setDefaultCommand(currentHome());
   }
 
   private void initializePosition() {
@@ -116,6 +122,27 @@ public class Elevator extends SubsystemBase implements Logged {
     return runOnce(() -> setGoal(posRequest.Position + relativePos));
   }
 
+  public Command currentHome() {
+    VoltageOut homeOutput = new VoltageOut(0);
+    Debouncer currentDebounce = new Debouncer(0.125, DebounceType.kRising);
+    Debouncer velocityDebounce = new Debouncer(0.125, DebounceType.kRising);
+
+    return run(() -> leader.setControl(homeOutput.withOutput(-0.25).withIgnoreHardwareLimits(true)))
+        .until(
+            () ->
+                currentDebounce.calculate(leader.getStatorCurrent().getValueAsDouble() > 5)
+                    && velocityDebounce.calculate(Math.abs(getVelocity()) < 0.5))
+        .finallyDo(
+            (interrupted) -> {
+              leader.setControl(homeOutput.withOutput(0));
+              leader.setPosition(0);
+              if (!interrupted) {
+                removeDefaultCommand();
+                leader.setControl(posRequest.withPosition(stowSetpoint));
+              }
+            });
+  }
+
   public boolean isStowed() {
     return getPosition() < 3;
   }
@@ -142,6 +169,7 @@ public class Elevator extends SubsystemBase implements Logged {
 
   @Override
   public void periodic() {
+
     log("Goal", posRequest.Position);
     log("StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
     log("SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
