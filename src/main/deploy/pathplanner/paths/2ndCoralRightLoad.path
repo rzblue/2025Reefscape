@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.713,
-        "y": 2.998
+        "x": 3.7132575757575754,
+        "y": 2.998421717171717
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0145408163265306,
-        "y": 1.9755102040816326
+        "x": 3.014798392084106,
+        "y": 1.9759319212533495
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef-C"
     },
     {
       "anchor": {
-        "x": 1.243,
-        "y": 0.905
+        "x": 1.243371212121212,
+        "y": 0.9046085858585866
       },
       "prevControl": {
-        "x": 1.8023989898989896,
-        "y": 1.0875631313131315
+        "x": 1.8027702020202014,
+        "y": 1.0871717171717181
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "RightLoad"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.615648185012766
+    "rotation": 55.66978280449656
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 58.97507391799935
+    "rotation": 57.0947570770121
   },
   "useDefaultConstraints": true
 }
