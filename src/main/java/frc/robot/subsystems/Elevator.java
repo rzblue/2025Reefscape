@@ -127,15 +127,21 @@ public class Elevator extends SubsystemBase implements Logged {
     Debouncer currentDebounce = new Debouncer(0.125, DebounceType.kRising);
     Debouncer velocityDebounce = new Debouncer(0.125, DebounceType.kRising);
 
-    return run(() -> leader.setControl(homeOutput.withOutput(-0.25).withIgnoreHardwareLimits(true)))
+    return runOnce(
+            () -> {
+              currentDebounce.calculate(false);
+              velocityDebounce.calculate(false);
+              leader.setControl(homeOutput.withOutput(-0.5));
+            })
+        .andThen(Commands.idle())
         .until(
             () ->
-                currentDebounce.calculate(leader.getStatorCurrent().getValueAsDouble() > 5)
+                currentDebounce.calculate(leader.getStatorCurrent().getValueAsDouble() > 20)
                     && velocityDebounce.calculate(Math.abs(getVelocity()) < 0.5))
         .finallyDo(
             (interrupted) -> {
               leader.setControl(homeOutput.withOutput(0));
-              leader.setPosition(0);
+              leader.setPosition(0, 0);
               if (!interrupted) {
                 removeDefaultCommand();
                 leader.setControl(posRequest.withPosition(stowSetpoint));
