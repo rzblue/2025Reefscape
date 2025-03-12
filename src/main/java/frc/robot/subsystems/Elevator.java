@@ -141,7 +141,7 @@ public class Elevator extends SubsystemBase implements Logged {
         .finallyDo(
             (interrupted) -> {
               leader.setControl(homeOutput.withOutput(0));
-              leader.setPosition(0, 0);
+              leader.setPosition(-0.13, 0);
               if (!interrupted) {
                 removeDefaultCommand();
                 leader.setControl(posRequest.withPosition(stowSetpoint));
