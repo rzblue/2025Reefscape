@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -23,26 +24,30 @@ public class Robot extends TimedRobot {
 
   private Command m_autonomousCommand;
 
-  private RobotContainer m_robotContainer;
+  private final RobotContainer m_robotContainer;
   private final RadioLogger radioLogger = new RadioLogger();
-  Timer userCodeTimer = new Timer();
-  Timer dtTimer = new Timer();
+  private final Timer userCodeTimer = new Timer();
+  private final Timer dtTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
-
     userCodeTimer.start();
     dtTimer.start();
-    DriverStation.silenceJoystickConnectionWarning(true);
+
+    radioLogger.bind(this);
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
+    DriverStation.silenceJoystickConnectionWarning(true);
+
     m_robotContainer = new RobotContainer();
 
     Monologue.setupMonologue(m_robotContainer, "Robot", false, false);
-    radioLogger.bind(this);
     // Threads.setCurrentThreadPriority(true, 20);
   }
 
